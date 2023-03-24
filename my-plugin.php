@@ -198,9 +198,9 @@ function content_calendar_callback()
 	$table_name = $wpdb->prefix . 'demo_data';
 
 	$data = $wpdb->get_results("SELECT * FROM $table_name");
-
-	echo '<table class="mytable">';
-	echo '<tr><th>ID</th><th>Date</th><th>Occasion</th><th>Post Title</th><th>Author</th><th>Reviewer</th></tr>';
+	echo '<div class="wrap">';
+	echo '<table class="wp-list-table widefat fixed striped table-view-list">';
+	echo '<thead><tr class="manage-column column-cb check-column"><th>ID</th><th>Date</th><th>Occasion</th><th>Post Title</th><th>Author</th><th>Reviewer</th></tr></thead>';
 	foreach ($data as $row) {
 		echo '<tr>';
 		echo '<td>' . $row->id . '</td>';
@@ -212,6 +212,7 @@ function content_calendar_callback()
 		echo '</tr>';
 	}
 	echo '</table>';
+	echo '</div>';
 }
 
 function run_my_plugin()
