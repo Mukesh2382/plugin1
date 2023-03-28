@@ -99,5 +99,71 @@ class My_Plugin_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/my-plugin-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
+	function handle_my_form()
+{
+	global $wpdb;
+	if (isset($_POST['date']) && isset($_POST['occasion']) && isset($_POST['post_title']) && isset($_POST['author']) && isset($_POST['reviewer'])) {
+		$table_name = $wpdb->prefix . 'demo_data';
+		$date = sanitize_text_field($_POST['date']);
+		$occasion = sanitize_text_field($_POST['occasion']);
+		$post_title = sanitize_text_field($_POST['post_title']);
+		$author = sanitize_text_field($_POST['author']);
+		$reviewer = sanitize_text_field($_POST['reviewer']);
+		$wpdb->insert(
+			$table_name,
+			array(
+				'date' => $date,
+				'occasion' => $occasion,
+				'post_title' => $post_title,
+				'author' => $author,
+				'reviewer' => $reviewer
+			)
+		);
+	}
+}
+
+
+
+
+function my_add_menu_pages()
+{
+	add_menu_page(
+		__('Content Calendar', 'my-plugin'),
+		'Content Calendar',
+		'manage_options',
+		'my-plugin',
+		array($this,'content_calendar_callback'),
+		'dashicons-calendar-alt',
+		6
+	);
+}
+
+
+
+function content_calendar_callback()
+{
+	include('partials/my-plugin-admin-display.php');
+	
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'demo_data';
+
+	$data = $wpdb->get_results("SELECT * FROM $table_name");
+	echo '<div class="wrap">';
+	echo '<table class="wp-list-table widefat fixed striped table-view-list">';
+	echo '<thead><tr class="manage-column column-cb check-column"><th>ID</th><th>Date</th><th>Occasion</th><th>Post Title</th><th>Author</th><th>Reviewer</th></tr></thead>';
+	foreach ($data as $row) {
+		echo '<tr>';
+		echo '<td>' . $row->id . '</td>';
+		echo '<td>' . $row->date . '</td>';
+		echo '<td>' . $row->occasion . '</td>';
+		echo '<td>' . $row->post_title . '</td>';
+		echo '<td>' . get_userdata($row->author)->display_name . '</td>';
+		echo '<td>' . get_userdata($row->reviewer)->display_name . '</td>';
+		echo '</tr>';
+	}
+	echo '</table>';
+	echo '</div>';
+}
 
 }
